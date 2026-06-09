@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shlok Vengurlekar — Industrial Automation & PLC Systems</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --accent: #00c9a7;
+    --accent2: #0097ff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --warning: #f0a500;
+    --danger: #ff4757;
+    --ladder-green: #39d353;
+    --font-mono: 'Courier New', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── SCAN LINE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,201,167,0.015) 2px,
+      rgba(0,201,167,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+  }
+  .nav-brand {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+  .nav-brand span { color: var(--muted); }
+  .nav-links { display: flex; gap: 0.25rem; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--accent);
+    background: rgba(0,201,167,0.08);
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    min-height: 100vh;
+    padding: 100px 2rem 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  section.full-width { max-width: none; padding-left: 0; padding-right: 0; }
+
+  /* ── HERO ── */
+  #hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    padding-top: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 60% 40%, rgba(0,151,255,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 20% 80%, rgba(0,201,167,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.2;
+    pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; width: 100%; padding: 0 2rem; }
+  .hero-tag {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+  h1 .accent { color: var(--accent); }
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--muted);
+    margin-bottom: 2rem;
+    font-weight: 400;
+  }
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+  .meta-chip {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--muted);
+    background: var(--surface);
+    letter-spacing: 0.04em;
+  }
+  .meta-chip span { color: var(--accent2); }
+  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0d1117;
+  }
+  .btn-primary:hover { background: #00e5bf; transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+  /* ── PLC TICKER ── */
+  .plc-ticker {
+    position: absolute;
+    bottom: 2rem;
+    left: 0; right: 0;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 0;
+    background: rgba(22,27,34,0.6);
+  }
+  .ticker-inner {
+    display: flex;
+    gap: 3rem;
+    white-space: nowrap;
+    animation: ticker 30s linear infinite;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .ticker-inner .ok { color: var(--ladder-green); }
+  .ticker-inner .warn { color: var(--warning); }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-header {
+    margin-bottom: 3rem;
+  }
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+  .section-title {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .section-title em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .section-desc {
+    color: var(--muted);
+    margin-top: 0.6rem;
+    max-width: 560px;
+  }
+
+  /* ── COURSE OVERVIEW ── */
+  #overview { background: var(--bg); }
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+  }
+  .info-card-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .info-card-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .info-card-value.mono { font-family: var(--font-mono); color: var(--accent); }
+
+  /* CO Cards */
+  .co-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+  .co-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .co-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .co-number {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+  .co-text { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── CURRICULUM ── */
+  #curriculum { background: var(--bg); }
+  .units-container { display: flex; flex-direction: column; gap: 2rem; }
+  .unit-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .unit-header {
+    padding: 1rem 1.5rem;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .unit-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(0,201,167,0.1);
+    border: 1px solid rgba(0,201,167,0.3);
+    border-radius: 3px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+  .unit-title { font-weight: 600; font-size: 0.95rem; }
+  .chapters-list { padding: 0; }
+  .chapter-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    cursor: default;
+  }
+  .chapter-item:last-child { border-bottom: none; }
+  .chapter-item:hover { background: rgba(0,201,167,0.03); }
+  .chapter-num {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent2);
+    padding-top: 0.15rem;
+    min-width: 24px;
+  }
+  .chapter-body { flex: 1; }
+  .chapter-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; }
+  .chapter-topics {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .chapter-hours {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    white-space: nowrap;
+    padding-top: 0.15rem;
+  }
+
+  /* ── EXPERIMENTS ── */
+  #experiments { background: var(--bg); }
+  .exp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .exp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .exp-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
+  .exp-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    margin-bottom: 0.7rem;
+    display: inline-block;
+    letter-spacing: 0.08em;
+  }
+  .tag-exercise { background: rgba(0,151,255,0.1); color: var(--accent2); border: 1px solid rgba(0,151,255,0.2); }
+  .tag-enquiry { background: rgba(240,165,0,0.1); color: var(--warning); border: 1px solid rgba(240,165,0,0.2); }
+  .tag-open { background: rgba(0,201,167,0.1); color: var(--accent); border: 1px solid rgba(0,201,167,0.2); }
+  .exp-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; }
+  .exp-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+  .exp-co {
+    margin-top: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+  .exp-co span { color: var(--accent); }
+
+  /* ── ASSESSMENT ── */
+  #assessment { background: var(--bg); }
+  .assessment-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .assess-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .assess-header {
+    padding: 1rem 1.4rem;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .assess-total {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+  }
+  .assess-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.4rem;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    font-size: 0.85rem;
+  }
+  .assess-row:last-child { border-bottom: none; }
+  .assess-row .label { color: var(--muted); }
+  .assess-row .marks { font-family: var(--font-mono); color: var(--text); font-weight: 600; }
+  .bar-container { margin-top: 0.5rem; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+
+  /* CO mapping table */
+  .co-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-top: 1.5rem;
+  }
+  .co-table th {
+    padding: 0.7rem 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-align: left;
+  }
+  .co-table td {
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .co-table tr:hover td { background: rgba(0,201,167,0.03); }
+  .check { color: var(--ladder-green); font-size: 1rem; }
+  .pct { font-family: var(--font-mono); color: var(--accent); font-weight: 600; }
+
+  /* ── REPORT ── */
+  #report { background: var(--bg); }
+  .report-hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-hero::after {
+    content: 'OPEN-ENDED EXPERIMENT';
+    position: absolute;
+    top: 1.2rem; right: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    border: 1px solid rgba(0,201,167,0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    background: rgba(0,201,167,0.06);
+  }
+  .report-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    line-height: 1.2;
+  }
+  .report-subtitle {
+    font-size: 0.9rem;
+    color: var(--accent2);
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono);
+  }
+  .report-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .r-chip {
+    font-size: 0.78rem;
+    padding: 0.3rem 0.7rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+  }
+  .r-chip strong { color: var(--text); }
+  .team-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    margin-bottom: 1.5rem;
+  }
+  .team-table th {
+    padding: 0.6rem 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-align: left;
+  }
+  .team-table td {
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--border);
+  }
+  .team-table tr:first-child(2) td { color: var(--accent); }
+  .team-table .you { color: var(--accent); font-weight: 600; }
+  .download-area {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Report sections */
+  .report-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  .report-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.4rem;
+  }
+  .rs-num {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--accent2);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+  .rs-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.6rem; }
+  .rs-body { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+  /* IO Table */
+  .io-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-top: 0.8rem;
+  }
+  .io-table th {
+    padding: 0.5rem 0.8rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-align: left;
+  }
+  .io-table td {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .io-table .addr { color: var(--accent2); }
+  .io-table .inp { color: var(--warning); }
+  .io-table .out { color: var(--ladder-green); }
+  .io-table .int { color: var(--accent); }
+  .io-table .tmr { color: #c678dd; }
+
+  /* Ladder diagram visual */
+  .ladder-visual {
+    background: #0a0f0a;
+    border: 1px solid #1a3a1a;
+    border-radius: 6px;
+    padding: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    overflow-x: auto;
+    margin-top: 1rem;
+    color: var(--ladder-green);
+    line-height: 1.8;
+  }
+  .ladder-visual .rung-label { color: var(--muted); font-size: 0.68rem; }
+  .ladder-visual .coil { color: #f0a500; }
+  .ladder-visual .comment { color: #3a6e3a; font-size: 0.72rem; }
+
+  /* Results table */
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .results-table th {
+    padding: 0.6rem 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: left;
+    letter-spacing: 0.06em;
+  }
+  .results-table td {
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border);
+  }
+  .results-table .pass { color: var(--ladder-green); font-weight: 600; }
+  .results-table tr:hover td { background: rgba(0,201,167,0.03); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  footer span { color: var(--accent); }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-indicator {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.1s;
+    z-index: 999;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .overview-grid,
+    .assessment-layout,
+    .report-sections { grid-template-columns: 1fr; }
+    .nav-links { gap: 0; }
+    .nav-links a { padding: 0.4rem 0.5rem; font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-indicator" id="scrollBar"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">SV<span>/</span>25EARC204</div>
+  <div class="nav-links">
+    <a href="#hero" class="active">Home</a>
+    <a href="#overview">Overview</a>
+    <a href="#curriculum">Curriculum</a>
+    <a href="#experiments">Lab</a>
+    <a href="#assessment">Assessment</a>
+    <a href="#report">Report</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="full-width">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">KLE Technological University · Dept. of Automation &amp; Robotics</div>
+    <h1>Shlok<br><span class="accent">Vengurlekar</span></h1>
+    <p class="hero-sub">Industrial Automation &amp; PLC Systems — Semester IV, 2025–26</p>
+    <div class="hero-meta">
+      <div class="meta-chip">USN <span>01FE24BAR002</span></div>
+      <div class="meta-chip">Course <span>25EARC204</span></div>
+      <div class="meta-chip">Credits <span>4</span></div>
+      <div class="meta-chip">Total Marks <span>100</span></div>
+      <div class="meta-chip">PLC <span>Omron CP2E</span></div>
+    </div>
+    <div class="hero-cta">
+      <a href="#report" class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        View Project Report
+      </a>
+      <a href="#curriculum" class="btn btn-outline">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Explore Curriculum
+      </a>
+    </div>
+  </div>
+
+  <div class="plc-ticker">
+    <div class="ticker-inner">
+      <span>SYSTEM_STATUS: <span class="ok">RUN</span></span>
+      <span>SCAN_CYCLE: <span class="ok">ACTIVE</span></span>
+      <span>I/O_MODULE: <span class="ok">ONLINE</span></span>
+      <span>LADDER_LOGIC: <span class="ok">EXECUTING</span></span>
+      <span>SENSOR_1: <span class="ok">DETECTED</span></span>
+      <span>FILL_VALVE: <span class="ok">OPEN</span></span>
+      <span>CONVEYOR: <span class="warn">STOPPED</span></span>
+      <span>TIMER_T0: <span class="ok">5000ms</span></span>
+      <span>FAULT_BIT: <span class="ok">CLEAR</span></span>
+      <span>ALARM: <span class="ok">INACTIVE</span></span>
+      <span>COURSE: <span class="ok">25EARC204</span></span>
+      <span>STUDENT: <span class="ok">SHLOK_VENGURLEKAR</span></span>
+      <!-- duplicate for seamless loop -->
+      <span>SYSTEM_STATUS: <span class="ok">RUN</span></span>
+      <span>SCAN_CYCLE: <span class="ok">ACTIVE</span></span>
+      <span>I/O_MODULE: <span class="ok">ONLINE</span></span>
+      <span>LADDER_LOGIC: <span class="ok">EXECUTING</span></span>
+      <span>SENSOR_1: <span class="ok">DETECTED</span></span>
+      <span>FILL_VALVE: <span class="ok">OPEN</span></span>
+      <span>CONVEYOR: <span class="warn">STOPPED</span></span>
+      <span>TIMER_T0: <span class="ok">5000ms</span></span>
+      <span>FAULT_BIT: <span class="ok">CLEAR</span></span>
+      <span>ALARM: <span class="ok">INACTIVE</span></span>
+      <span>COURSE: <span class="ok">25EARC204</span></span>
+      <span>STUDENT: <span class="ok">SHLOK_VENGURLEKAR</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="section-header">
+    <div class="section-eyebrow">Course Overview</div>
+    <h2 class="section-title">Industrial <em>Automation</em> &amp; PLC Systems</h2>
+    <p class="section-desc">A comprehensive 4-credit course covering the architecture, programming, and real-world application of PLCs in modern industrial environments.</p>
+  </div>
+
+  <div class="overview-grid">
+    <div class="info-card">
+      <div class="info-card-label">Course Code</div>
+      <div class="info-card-value mono">25EARC204</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Teaching Hours</div>
+      <div class="info-card-value">30 L + 48 P = <span style="color:var(--accent)">78 hrs</span></div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Faculty</div>
+      <div class="info-card-value" style="font-size:0.9rem">Dr. Vinayak N Kulkarni · Mrs. C S Soori</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">PLC Platform Used</div>
+      <div class="info-card-value">Omron CP2E · CX-Programmer</div>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-bottom:1.5rem">
+    <div class="section-eyebrow">Course Outcomes</div>
+    <h3 style="font-size:1.2rem;font-weight:600">Six Learning Outcomes</h3>
+  </div>
+  <div class="co-grid">
+    <div class="co-card">
+      <div class="co-number">CO-1</div>
+      <div class="co-text">Explain the architecture and hierarchy of industrial automation systems including sensors, actuators, controllers and supervisory systems.</div>
+    </div>
+    <div class="co-card">
+      <div class="co-number">CO-2</div>
+      <div class="co-text">Describe the architecture, operating cycle and programming languages of PLCs used in industrial automation.</div>
+    </div>
+    <div class="co-card">
+      <div class="co-number">CO-3</div>
+      <div class="co-text">Develop ladder logic programs for basic industrial control systems using Boolean logic and safety interlocks.</div>
+    </div>
+    <div class="co-card">
+      <div class="co-number">CO-4</div>
+      <div class="co-text">Implement ladder logic programs using timers, counters and sequencing instructions for automation applications.</div>
+    </div>
+    <div class="co-card">
+      <div class="co-number">CO-5</div>
+      <div class="co-text">Develop PLC-based control solutions for industrial automation systems such as conveyors, bottling plants and elevator systems.</div>
+    </div>
+    <div class="co-card">
+      <div class="co-number">CO-6</div>
+      <div class="co-text">Design and fabricate a working industrial automation proof-of-concept system and implement PLC-based control using sensors, actuators and ladder logic.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CURRICULUM -->
+<section id="curriculum">
+  <div class="section-header">
+    <div class="section-eyebrow">Curriculum</div>
+    <h2 class="section-title">Six Chapters, <em>Two Units</em></h2>
+    <p class="section-desc">30 lecture hours spanning from automation fundamentals through to HMI design and real-world robotics applications.</p>
+  </div>
+
+  <div class="units-container">
+    <div class="unit-block">
+      <div class="unit-header">
+        <span class="unit-badge">UNIT I</span>
+        <span class="unit-title">Fundamentals of Automation &amp; PLC Programming</span>
+      </div>
+      <div class="chapters-list">
+        <div class="chapter-item">
+          <span class="chapter-num">CH.1</span>
+          <div class="chapter-body">
+            <div class="chapter-name">Industrial Automation — Concepts &amp; Architecture</div>
+            <div class="chapter-topics">Evolution of automation · Fixed, programmable &amp; flexible types · Automation hierarchy (field → enterprise) · Sensors, actuators, HMI, SCADA · Role of PLCs in modern automation</div>
+          </div>
+          <span class="chapter-hours">5L / 10P hrs</span>
+        </div>
+        <div class="chapter-item">
+          <span class="chapter-num">CH.2</span>
+          <div class="chapter-body">
+            <div class="chapter-name">Basics of Programmable Logic Controllers</div>
+            <div class="chapter-topics">Relay limitations · PLC definition &amp; advantages · Hardware architecture (CPU, Memory, I/O, PSU) · Scan cycle · Fixed vs Modular PLCs · IEC 61131-3 languages</div>
+          </div>
+          <span class="chapter-hours">5L / 6P hrs</span>
+        </div>
+        <div class="chapter-item">
+          <span class="chapter-num">CH.3</span>
+          <div class="chapter-body">
+            <div class="chapter-name">Ladder Logic Programming</div>
+            <div class="chapter-topics">Contacts &amp; coils · AND / OR / NOT logic · Start–stop with sealing · Interlocking circuits · Safety interlocks · Emergency stop · NC fail-safe behaviour</div>
+          </div>
+          <span class="chapter-hours">5L / 6P hrs</span>
+        </div>
+        <div class="chapter-item">
+          <span class="chapter-num">CH.4</span>
+          <div class="chapter-body">
+            <div class="chapter-name">Intermediate Logic Operations</div>
+            <div class="chapter-topics">ON/OFF/Retentive timers · Up/down/cascaded counters · Comparison &amp; arithmetic · Step-based sequencing · Fault detection · Alarm bits · Timer-based safety delays</div>
+          </div>
+          <span class="chapter-hours">5L / 6P hrs</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="unit-block">
+      <div class="unit-header">
+        <span class="unit-badge">UNIT II</span>
+        <span class="unit-title">Applied PLC Programming &amp; HMI</span>
+      </div>
+      <div class="chapters-list">
+        <div class="chapter-item">
+          <span class="chapter-num">CH.5</span>
+          <div class="chapter-body">
+            <div class="chapter-name">PLC Programming for Automation &amp; Robotics Applications</div>
+            <div class="chapter-topics">Conveyor / sorting control · Water level systems · Bottling plant (fill, cap, count) · Elevator control with safety interlocks · Pick-and-place robots · AGV control · Industrial safety</div>
+          </div>
+          <span class="chapter-hours">5L / 10P hrs</span>
+        </div>
+        <div class="chapter-item">
+          <span class="chapter-num">CH.6</span>
+          <div class="chapter-body">
+            <div class="chapter-name">HMI Design &amp; Operational Interfaces</div>
+            <div class="chapter-topics">HMI vs SCADA distinction · Static vs dynamic objects · Real-time trending · Alarm configuration · Basic diagnostic screens · Data integration with PLC variables</div>
+          </div>
+          <span class="chapter-hours">5L / 10P hrs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIMENTS -->
+<section id="experiments">
+  <div class="section-header">
+    <div class="section-eyebrow">Laboratory Work</div>
+    <h2 class="section-title">Exercises, Enquiries &amp; <em>Open-Ended</em> Experiments</h2>
+    <p class="section-desc">48 practical hours across 10 exercises, 5 structured enquiry problems, and one open-ended capstone project.</p>
+  </div>
+
+  <div style="margin-bottom:1.2rem;display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center">
+    <span class="exp-tag tag-exercise" style="margin:0">Exercise</span>
+    <span class="exp-tag tag-enquiry" style="margin:0">Structured Enquiry</span>
+    <span class="exp-tag tag-open" style="margin:0">Open-Ended</span>
+  </div>
+
+  <div class="exp-grid">
+    <div class="exp-card">
+      <span class="exp-tag tag-exercise">Exercise 1</span>
+      <div class="exp-title">Virtual Conveyor-Based Production Line Modeling</div>
+      <div class="exp-desc">Build a 3D conveyor system in simulation; define sources, conveyors, sinks, and part flow.</div>
+      <div class="exp-co">Chapter <span>1</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-exercise">Exercise 2</span>
+      <div class="exp-title">Sensor &amp; Actuator Integration in Virtual Automation</div>
+      <div class="exp-desc">Integrate proximity/limit sensors and actuators (stoppers/diverters) and simulate responses.</div>
+      <div class="exp-co">Chapter <span>1, 2</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-exercise">Exercise 3</span>
+      <div class="exp-title">PLC-Based Start–Stop Control of Conveyor</div>
+      <div class="exp-desc">Develop basic PLC ladder logic for start–stop control and validate with the virtual model.</div>
+      <div class="exp-co">Chapter <span>3</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-exercise">Exercise 4</span>
+      <div class="exp-title">Latching and Interlocking Logic Implementation</div>
+      <div class="exp-desc">Implement latching, sealing, and interlocking logic for safe conveyor operation.</div>
+      <div class="exp-co">Chapter <span>3</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-exercise">Exercise 5</span>
+      <div class="exp-title">PLC Timers in Automation Systems</div>
+      <div class="exp-desc">Apply ON-delay and OFF-delay timers for sequencing and spacing control on a conveyor.</div>
+      <div class="exp-co">Chapter <span>4</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-exercise">Exercise 6</span>
+      <div class="exp-title">PLC Counters for Production Counting</div>
+      <div class="exp-desc">Use up/down counters to count parts and control batch completion logic.</div>
+      <div class="exp-co">Chapter <span>4</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-exercise">Exercise 7</span>
+      <div class="exp-title">Water Level Control System Using PLC</div>
+      <div class="exp-desc">Design single-tank and multi-level water control using ladder logic and interlocks.</div>
+      <div class="exp-co">Chapter <span>5</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-exercise">Exercise 8</span>
+      <div class="exp-title">Bottling Plant Automation Using PLC</div>
+      <div class="exp-desc">Implement filling, capping, and counting logic in a virtual bottling production line.</div>
+      <div class="exp-co">Chapter <span>5</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-exercise">Exercise 9</span>
+      <div class="exp-title">Elevator (Lift) Control Logic Simulation</div>
+      <div class="exp-desc">Develop floor selection, direction control, and safety interlocks for a lift system.</div>
+      <div class="exp-co">Chapter <span>5</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-exercise">Exercise 10</span>
+      <div class="exp-title">Introduction to SCADA – Tagging and Visualization</div>
+      <div class="exp-desc">Create SCADA screens with tags, indicators, and basic visualization for an automation system.</div>
+      <div class="exp-co">Chapter <span>6</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-enquiry">SE 1</span>
+      <div class="exp-title">Bottleneck Identification in Production Line</div>
+      <div class="exp-desc">Analyze material flow in a virtual line, identify bottlenecks, and propose improvements.</div>
+      <div class="exp-co">Chapter <span>1</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-enquiry">SE 2</span>
+      <div class="exp-title">PLC Logic Timing and Sequence Analysis</div>
+      <div class="exp-desc">Evaluate timer/counter settings and analyze their impact on system sequencing.</div>
+      <div class="exp-co">Chapter <span>4</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-enquiry">SE 3</span>
+      <div class="exp-title">Safety Failure Analysis in PLC-Controlled Systems</div>
+      <div class="exp-desc">Introduce sensor/actuator failures; analyze behavior and improve safety interlocks.</div>
+      <div class="exp-co">Chapter <span>3, 5</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-enquiry">SE 4</span>
+      <div class="exp-title">Comparative Analysis of Automation Scenarios</div>
+      <div class="exp-desc">Compare alternative layouts or logic strategies for throughput and utilization.</div>
+      <div class="exp-co">Chapter <span>1, 5</span></div>
+    </div>
+    <div class="exp-card">
+      <span class="exp-tag tag-enquiry">SE 5</span>
+      <div class="exp-title">SCADA-Based Monitoring and Fault Diagnosis</div>
+      <div class="exp-desc">Analyze how alarms and trends assist in fault detection and operational decisions.</div>
+      <div class="exp-co">Chapter <span>6</span></div>
+    </div>
+    <div class="exp-card" style="border-color:rgba(0,201,167,0.3)">
+      <span class="exp-tag tag-open">Open-Ended</span>
+      <div class="exp-title">Automatic Bottle Filling System — Omron CP2E</div>
+      <div class="exp-desc">Designed and implemented a conveyor-based automatic bottle filling system using Omron CP2E PLC with fault detection, jam alarm, and timer-based control. Full report available below.</div>
+      <div class="exp-co">Chapter <span>3, 4, 5</span> · CO <span>6</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSESSMENT -->
+<section id="assessment">
+  <div class="section-header">
+    <div class="section-eyebrow">Assessment</div>
+    <h2 class="section-title">Evaluation <em>Structure</em></h2>
+    <p class="section-desc">100 marks split equally between in-semester assessments (ISA + Lab) and end-semester examinations.</p>
+  </div>
+
+  <div class="assessment-layout">
+    <div class="assess-card">
+      <div class="assess-header">
+        Theory Assessment
+        <span class="assess-total">50 marks</span>
+      </div>
+      <div class="assess-row">
+        <span class="label">ISA-1 (Unit I)</span>
+        <span class="marks">10</span>
+      </div>
+      <div class="assess-row">
+        <span class="label">ISA-2 (Unit II)</span>
+        <span class="marks">10</span>
+      </div>
+      <div class="assess-row">
+        <span class="label">Assignment</span>
+        <span class="marks">5</span>
+      </div>
+      <div class="assess-row">
+        <span class="label">ESA (End Semester)</span>
+        <span class="marks">25</span>
+      </div>
+    </div>
+    <div class="assess-card">
+      <div class="assess-header">
+        Lab Assessment
+        <span class="assess-total">50 marks</span>
+      </div>
+      <div class="assess-row">
+        <span class="label">ISA Lab (Continuous)</span>
+        <span class="marks">25</span>
+      </div>
+      <div class="assess-row">
+        <span class="label">ESA Lab (Practical Exam)</span>
+        <span class="marks">25</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden">
+    <div style="padding:1rem 1.4rem;background:var(--surface2);border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem">CO–Assessment Mapping</div>
+    <div style="overflow-x:auto;padding:1rem 1.4rem">
+      <table class="co-table">
+        <thead>
+          <tr>
+            <th>Course Outcome</th>
+            <th>Weight</th>
+            <th>ISA-I</th>
+            <th>ISA-II</th>
+            <th>Lab</th>
+            <th>ESA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CO-1: Automation Architecture &amp; Hierarchy</td>
+            <td class="pct">15%</td>
+            <td class="check">✓</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>CO-2: PLC Architecture &amp; Languages</td>
+            <td class="pct">15%</td>
+            <td class="check">✓</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>CO-3: Ladder Logic — Boolean &amp; Interlocks</td>
+            <td class="pct">15%</td>
+            <td>—</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>CO-4: Timers, Counters &amp; Sequencing</td>
+            <td class="pct">15%</td>
+            <td>—</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>CO-5: PLC Solutions — Conveyor, Bottling, Lift</td>
+            <td class="pct">20%</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="check">✓</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>CO-6: Design &amp; Fabricate Industrial POC</td>
+            <td class="pct">20%</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="check">✓</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- REPORT -->
+<section id="report">
+  <div class="section-header">
+    <div class="section-eyebrow">Open-Ended Experiment · CO-6</div>
+    <h2 class="section-title">Project <em>Report</em></h2>
+    <p class="section-desc">Design and implementation of an Automatic Bottle Filling System using Omron CP2E PLC — the capstone open-ended experiment.</p>
+  </div>
+
+  <!-- Report Cover -->
+  <div class="report-hero">
+    <div class="report-title">Automatic Bottle Filling System</div>
+    <div class="report-subtitle">PLC-Based Industrial Automation Using Omron CP2E · CX-Programmer</div>
+    <div class="report-meta-row">
+      <div class="r-chip">Department of <strong>Automation &amp; Robotics</strong></div>
+      <div class="r-chip">Semester <strong>IV</strong></div>
+      <div class="r-chip">Course <strong>25EARC204</strong></div>
+      <div class="r-chip">PLC <strong>Omron CP2E</strong></div>
+      <div class="r-chip">Software <strong>CX-Programmer</strong></div>
+    </div>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1.2rem">Under the guidance of Dr. Vinayak Kulkarni · Mrs. C S Soori · Mr. Mahesh C</p>
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th>Sl. No.</th>
+          <th>Student Name</th>
+          <th>USN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td class="you">Shlok Vengurlekar</td>
+          <td class="you">01FE24BAR002</td>
+        </tr>
+        <tr><td>2</td><td>Pavanashree Kamat</td><td>01FE24BAR003</td></tr>
+        <tr><td>3</td><td>Godwin Anthony</td><td>01FE24BAR022</td></tr>
+        <tr><td>4</td><td>Chidanand Karennavar</td><td>01FE24BAR027</td></tr>
+        <tr><td>5</td><td>Gajanan Pawar</td><td>01FE24BAR015</td></tr>
+      </tbody>
+    </table>
+    <div class="download-area">
+      <a href="Automatic_Bottle_Filling_System_Omron_CP2E.docx" download="Automatic_Bottle_Filling_System_Omron_CP2E.docx" class="btn btn-primary" id="downloadBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Full Report (.docx)
+      </a>
+      <span style="font-size:0.78rem;color:var(--muted);font-family:var(--font-mono)">Place the .docx file in the same folder as index.html</span>
+    </div>
+  </div>
+
+  <!-- Abstract -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1.8rem;margin-bottom:1.5rem">
+    <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent);letter-spacing:0.15em;margin-bottom:0.8rem">ABSTRACT</div>
+    <p style="font-size:0.88rem;color:var(--muted);line-height:1.8">
+      This project presents the design and implementation of an <strong style="color:var(--text)">Automatic Conveyor Filling System</strong> using the <strong style="color:var(--text)">Omron CP2E PLC</strong>, programmed in ladder logic via CX-Programmer. The system automates the transport, detection, filling, and discharge of containers on a conveyor production line. A proximity sensor detects container arrival at the filling station, halts the conveyor, and activates the fill valve for a preset duration. A second sensor at the exit confirms successful dispatch. An <strong style="color:var(--text)">ON-Delay Timer (TON)</strong> fault-detection mechanism monitors for jams or blockages and triggers an alarm, halting the process to prevent equipment damage. The project demonstrates sensor integration, timer-based control, sequential automation, fault detection, and PLC ladder logic — key skills for industrial automation engineers.
+    </p>
+  </div>
+
+  <!-- Report Sections Grid -->
+  <div class="report-sections">
+    <div class="report-section">
+      <div class="rs-num">SECTION 01</div>
+      <div class="rs-title">System Overview &amp; Components</div>
+      <div class="rs-body">
+        The system uses an SMPS-fed Omron CP2E as the central controller, interfacing START/STOP pushbuttons, two proximity sensors, a conveyor motor, a filling valve, and an alarm buzzer. The SMPS provides regulated 24 V DC to all control-level devices, ensuring noise immunity.
+      </div>
+    </div>
+    <div class="report-section">
+      <div class="rs-num">SECTION 02</div>
+      <div class="rs-title">Operational Sequence</div>
+      <div class="rs-body">
+        START → Conveyor runs → Sensor-1 detects container → Conveyor stops → Fill Timer T0 activates valve (5 s) → Valve closes → Conveyor restarts → Sensor-2 confirms exit → Cycle repeats. Pressing STOP at any time deactivates motor, valve, and alarm.
+      </div>
+    </div>
+    <div class="report-section">
+      <div class="rs-num">SECTION 03</div>
+      <div class="rs-title">Fault / Jam Detection</div>
+      <div class="rs-body">
+        Jam Timer T1 (8 s preset) monitors exit detection after conveyor starts. If Sensor-2 does not trigger within T1, the Fault Bit (W0.01) is set, the alarm output (100.02) energises, and the system halts. The fault latches until the operator presses START to reset.
+      </div>
+    </div>
+    <div class="report-section">
+      <div class="rs-num">SECTION 04</div>
+      <div class="rs-title">Ladder Logic Structure (6 Rungs)</div>
+      <div class="rs-body">
+        Rung 0: START/latch. Rung 2: Conveyor motor control (interlock with fill state). Rung 17: SET W0.01 on Sensor-1 detection. Rung 9: Fill Timer T0 start. Rung 13: Fill valve activation on T0 complete. Rungs 20–23: Completion timer T1 → RSET W0.01 to resume cycle.
+      </div>
+    </div>
+    <div class="report-section">
+      <div class="rs-num">SECTION 05</div>
+      <div class="rs-title">Industrial Applications</div>
+      <div class="rs-body">
+        Food &amp; beverage bottling lines · Pharmaceutical vial filling · Chemical drum dispensing · Paint &amp; lubricant canning · Consumer goods packaging · Agricultural seed/fertiliser bag filling.
+      </div>
+    </div>
+    <div class="report-section">
+      <div class="rs-num">SECTION 06</div>
+      <div class="rs-title">Future Enhancements</div>
+      <div class="rs-body">
+        HMI integration for real-time monitoring · Analog fill-level sensors for precise quantity control · SCADA connectivity for remote supervision · Multi-station independent control zones using additional CP2E units · Variable-speed conveyor via VFD.
+      </div>
+    </div>
+  </div>
+
+  <!-- I/O Table -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.5rem">
+    <div style="padding:1rem 1.4rem;background:var(--surface2);border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem">PLC I/O Mapping — Omron CP2E Tag Table</div>
+    <div style="overflow-x:auto;padding:1rem 1.4rem">
+      <table class="io-table">
+        <thead>
+          <tr>
+            <th>Tag Name</th>
+            <th>Address</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>I/O</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Start PB</td><td class="addr">0.00</td><td>BOOL</td><td>Start Pushbutton</td><td class="inp">INPUT</td></tr>
+          <tr><td>Stop PB</td><td class="addr">0.01</td><td>BOOL</td><td>Stop Pushbutton</td><td class="inp">INPUT</td></tr>
+          <tr><td>Prox-1 Filling</td><td class="addr">0.02</td><td>BOOL</td><td>Proximity Sensor 1 — Filling Station</td><td class="inp">INPUT</td></tr>
+          <tr><td>Prox-2 Exit</td><td class="addr">0.03</td><td>BOOL</td><td>Proximity Sensor 2 — Exit Point</td><td class="inp">INPUT</td></tr>
+          <tr><td>Conveyor Motor</td><td class="addr">100.00</td><td>BOOL</td><td>Conveyor Belt Motor</td><td class="out">OUTPUT</td></tr>
+          <tr><td>Fill Valve</td><td class="addr">100.01</td><td>BOOL</td><td>Filling Station Valve</td><td class="out">OUTPUT</td></tr>
+          <tr><td>Alarm Output</td><td class="addr">100.02</td><td>BOOL</td><td>Alarm Buzzer / Lamp</td><td class="out">OUTPUT</td></tr>
+          <tr><td>System Run Bit</td><td class="addr">W0.00</td><td>BOOL</td><td>Internal Run Latch Bit</td><td class="int">INTERNAL</td></tr>
+          <tr><td>Fault Bit</td><td class="addr">W0.01</td><td>BOOL</td><td>Jam / Fault Flag Bit</td><td class="int">INTERNAL</td></tr>
+          <tr><td>Fill Timer</td><td class="addr">T0</td><td>TON</td><td>Timer for Filling Duration (5000 ms)</td><td class="tmr">TIMER</td></tr>
+          <tr><td>Jam Timer</td><td class="addr">T1</td><td>TON</td><td>Timer for Jam Detection (8000 ms)</td><td class="tmr">TIMER</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Ladder Logic Visual -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.5rem">
+    <div style="padding:1rem 1.4rem;background:var(--surface2);border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem;display:flex;align-items:center;justify-content:space-between">
+      Ladder Logic Overview
+      <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted)">CX-Programmer · Omron CP2E</span>
+    </div>
+    <div style="padding:1.4rem">
+      <div class="ladder-visual">
+<span class="comment">;; ─── RUNG 0: START / STOP LATCH ────────────────────────────────</span>
+|  [0.00 Start]   [W0.00 RunBit] |                    <span class="coil">( W0.00 )</span>
+|─────┤ ├──────────────────────────────────────────────<span class="coil">( OUT )</span>──|
+|  [W0.00 RunBit]                                                  |
+|─────┤ ├──────────────────────────────────────────────────────────|
+|  [0.01 Stop_NC]                                                  |
+|─────┤/├──────────────────────────────────────────────────────────|
+
+<span class="comment">;; ─── RUNG 2: CONVEYOR MOTOR ──────────────────────────────────── </span>
+|  [W0.00 Run]    [W0.01 FaultNC]                    <span class="coil">( 100.00 )</span>
+|─────┤ ├──────────┤/├──────────────────────────────<span class="coil">( Motor )</span>──|
+
+<span class="comment">;; ─── RUNG 17: SET FILL STATE on SENSOR-1 ────────────────────── </span>
+|  [W0.00 Run]    [0.02 Prox1]                       <span class="coil">( W0.01 )</span>
+|─────┤ ├──────────┤ ├──────────────────────────────<span class="coil">( SET  )</span>──|
+
+<span class="comment">;; ─── RUNG 9: FILL TIMER ─────────────────────────────────────── </span>
+|  [W0.00 Run]    [W0.01 Fill]                       <span class="coil">[T0  TON]</span>
+|─────┤ ├──────────┤ ├──────────────────────────────<span class="coil"> PT:5000</span>──|
+
+<span class="comment">;; ─── RUNG 13: FILL VALVE ─────────────────────────────────────── </span>
+|  [T0.DN Done]                                      <span class="coil">( 100.01 )</span>
+|─────┤ ├──────────────────────────────────────────<span class="coil">( Valve )</span>──|
+
+<span class="comment">;; ─── RUNG 23: RESET FILL STATE via JAM TIMER ─────────────────── </span>
+|  [T1.DN Done]                                      <span class="coil">( W0.01 )</span>
+|─────┤ ├──────────────────────────────────────────<span class="coil">( RSET  )</span>──|
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Table -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.5rem">
+    <div style="padding:1rem 1.4rem;background:var(--surface2);border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem">Functional Verification Results</div>
+    <div style="overflow-x:auto;padding:1rem 1.4rem">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Test Parameter</th>
+            <th>Observation</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Start/Stop Control</td><td>System latches on START and de-energises on STOP or fault</td><td class="pass">PASS</td></tr>
+          <tr><td>Sensor-1 Response</td><td>Conveyor halts within one scan cycle upon Prox-1 detection</td><td class="pass">PASS</td></tr>
+          <tr><td>Filling Cycle</td><td>Fill Valve holds for T0 preset duration (5000 ms)</td><td class="pass">PASS</td></tr>
+          <tr><td>Motor Interlock</td><td>Conveyor motor remains OFF during active fill cycle</td><td class="pass">PASS</td></tr>
+          <tr><td>Exit Detection</td><td>Sensor-2 correctly identifies container at exit, resets jam timer</td><td class="pass">PASS</td></tr>
+          <tr><td>Jam Detection</td><td>Alarm triggers when Sensor-2 absent beyond T1 preset (8000 ms)</td><td class="pass">PASS</td></tr>
+          <tr><td>Alarm Reset</td><td>Fault Bit clears on START press; Alarm Output de-energises</td><td class="pass">PASS</td></tr>
+          <tr><td>Stop Sequence</td><td>Motor, valve, and alarm all de-energise correctly</td><td class="pass">PASS</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Conclusion -->
+  <div style="background:var(--surface);border:1px solid rgba(0,201,167,0.2);border-radius:6px;padding:1.8rem">
+    <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent);letter-spacing:0.15em;margin-bottom:0.8rem">CONCLUSION</div>
+    <p style="font-size:0.88rem;color:var(--muted);line-height:1.8">
+      This project demonstrates the implementation of an Automatic Conveyor Filling System using the Omron CP2E PLC with ladder logic in CX-Programmer. The system realises START/STOP control with latching, proximity-sensor-driven conveyor and filling actions, and a timer-based fill mechanism. Jam and fault detection are incorporated with alarm annunciation. The project highlights core industrial automation principles including sealed latch logic, TON timer usage, output interlock design, and fault-safe system architecture. The modular rung layout makes the program straightforward to maintain and debug, and the design is scalable for real industrial deployment.
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p><span>Shlok Vengurlekar</span> · USN 01FE24BAR002 · Dept. of Automation &amp; Robotics · KLE Technological University · 2025–26</p>
+  <p style="margin-top:0.4rem">Course 25EARC204 — Industrial Automation &amp; PLC Systems</p>
+</footer>
+
+<script>
+  // Scroll progress bar
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.body.scrollHeight - window.innerHeight;
+    document.getElementById('scrollBar').style.width = (scrolled / total * 100) + '%';
+  });
+
+  // Active nav link highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
